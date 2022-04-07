@@ -45,6 +45,15 @@ public class StockInventoryImpl implements  IStockInventory{
 			System.out.println("Category: "+key+" Cap: "+categoryCap.get(key));
 		}
 	}
-
+    
+	public void addItem(String item, String category, String quanity, String ppu) {
+		items.put(item, new String[] {category,quanity,ppu});
+	}
+	
+	public void getItems() {
+		for(String key: items.keySet()) {
+			System.out.println("---"+key+"---"+items.get(key)[0]+"---"+items.get(key)[1]+"---"+items.get(key)[2]);
+		}
+	}
 
 }
