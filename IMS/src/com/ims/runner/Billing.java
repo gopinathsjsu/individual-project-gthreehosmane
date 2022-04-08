@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Scanner;
 
 import com.ims.impl.StockInventoryImpl;
@@ -14,8 +15,10 @@ import com.ims.impl.StockInventoryImpl;
 public class Billing {
 	public static void main(String[] args) {
 		File inventory  = null; 
+		File order = null;
+		HashMap<String,String> orderDetails = new HashMap<>();
+		HashMap<String,Integer> cart = new HashMap<>();
 		StockInventoryImpl uniqueInventoryInstance = StockInventoryImpl.getInventoryInstance();
-		
 		// set inventory
 		Scanner sc = new Scanner(System.in);
 		System.out.println("Enter inventory file name: ");
@@ -54,12 +57,62 @@ public class Billing {
 		}
 		
 		
+		
+		// process order
+		String cardNumber  = null;
+		System.out.println("Enter order file name: ");
+		String orderFilename = sc.next();
+		order = new File(orderFilename);
+		FileReader orderfileReader = null;
+		try {
+			orderfileReader = new FileReader(order);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		BufferedReader orderReader = new BufferedReader(orderfileReader);
+		String orderline = "";
+		String[] ordervalues = null;
+		try {
+			while((orderline = orderReader.readLine()) != null)
+			{
+				ordervalues = orderline.split("\n");
+				for(int i=0;i< ordervalues.length;i++) {
+					String[] items = ordervalues[i].split(",");
+					
+					if( items.length == 3 && !("Items".equals(items[0]))) {
+						
+							
+								String item = items[0];
+								String quantity = items[1];
+								cardNumber = items[2];
+								orderDetails.put(item, quantity);
+								
+						
+					}
+					 if( items.length == 2 && (!items[0].equals("Item"))) {
+						
+					
+								String item = items[0];
+								String quantity = items[1];
+								orderDetails.put(item, quantity);
+						
+					}
+				}
+				
+			}
+			orderReader.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		Billing billing = new Billing();
 		// set category cap
 		billing.setCategoryCap(uniqueInventoryInstance);
 		uniqueInventoryInstance.printCap();
 		uniqueInventoryInstance.getItems();
-		// process order
+		//check order details
+		for(String key : orderDetails.keySet()) {
+			System.out.println(key+"--"+orderDetails.get(key));
+		}
 		//chain of handlers
 		sc.close();
 
