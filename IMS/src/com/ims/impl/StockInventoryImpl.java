@@ -7,7 +7,7 @@ import com.ims.interfaces.IStockInventory;
 
 public class StockInventoryImpl implements  IStockInventory{
 	
-	private ArrayList<Long> cards = new ArrayList<>();
+	private ArrayList<String> cards = new ArrayList<>();
 	private HashMap<String,String[]> items = new HashMap<>();
 	private HashMap<String,Integer> categoryCap = new HashMap<>();
 	
@@ -25,13 +25,13 @@ public class StockInventoryImpl implements  IStockInventory{
 		return uniqueInventoryInstance;
 	}
 	
-	public void addCard(Long newCardNumber) {
+	public void addCard(String newCardNumber) {
 		if(!cards.contains(newCardNumber)) {
 			cards.add(newCardNumber);
 			System.out.println("Card added to databse successfully");
 		}
 	}
-	public boolean hasCard(Long cardNumber) {
+	public boolean hasCard(String cardNumber) {
 		if(cards.contains(cardNumber))
 			return true;
 		else
@@ -45,15 +45,16 @@ public class StockInventoryImpl implements  IStockInventory{
 			System.out.println("Category: "+key+" Cap: "+categoryCap.get(key));
 		}
 	}
+	public int getCap(String category) {
+		return categoryCap.get(category);
+	}
     
-	public void addItem(String item, String category, String quanity, String ppu) {
-		items.put(item, new String[] {category,quanity,ppu});
+	public void addItem(String item, String category, String quantity, String ppu) {
+		items.put(item, new String[] {category,quantity,ppu});
 	}
 	
-	public void getItems() {
-		for(String key: items.keySet()) {
-			System.out.println("---"+key+"---"+items.get(key)[0]+"---"+items.get(key)[1]+"---"+items.get(key)[2]);
-		}
+	public int getItemStock(String item) {
+		return Integer.valueOf(items.get(item)[1]);
 	}
 
 }
