@@ -10,13 +10,13 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Scanner;
 
+import com.ims.impl.ProcessOrderImpl;
 import com.ims.impl.StockInventoryImpl;
 
 
 
 public class Billing {
 	public static void main(String[] args) {
-		File inventory  = null; 
 		File order = null;
 		HashMap<String,String> orderDetails = new HashMap<>();
 		StockInventoryImpl uniqueInventoryInstance = StockInventoryImpl.getInventoryInstance();
@@ -46,7 +46,7 @@ public class Billing {
 								String item = items[0];
 								String quantity = items[1];
 								cardNumber = items[2];
-								orderDetails.put(item, quantity);
+								orderDetails.put(item.toLowerCase(), quantity);
 						}		
 						
 					}
@@ -55,7 +55,7 @@ public class Billing {
 					
 								String item = items[0];
 								String quantity = items[1];
-								orderDetails.put(item, quantity);
+								orderDetails.put(item.toLowerCase(), quantity);
 						
 					}
 				}
@@ -68,16 +68,10 @@ public class Billing {
 		Billing billing = new Billing();
 		// set category cap
 		billing.setCategoryCap(uniqueInventoryInstance);
-		uniqueInventoryInstance.printCap();
-		//uniqueInventoryInstance.getItem();
 		// set inventory
 		billing.setInventory(uniqueInventoryInstance);
-		//check order details
-		for(String key : orderDetails.keySet()) {
-			System.out.println(key+"--"+orderDetails.get(key));
-		}
-		//chain of handlers
-		// check card, check inventory stock, check category cap while processing order
+		ProcessOrderImpl processOrder = new ProcessOrderImpl();
+		processOrder.processOrder(orderDetails, cardNumber, orderFilename);
 		sc.close();
 
 	}
@@ -94,7 +88,7 @@ public class Billing {
 	public void setCategoryCap(StockInventoryImpl uniqueInventoryInstance) {
 		uniqueInventoryInstance.addCap("Essentials", 3);
 		uniqueInventoryInstance.addCap("Luxury", 4);
-		uniqueInventoryInstance.addCap("Miscellaneous", 6);
+		uniqueInventoryInstance.addCap("Misc", 6);
 		
 	}
 

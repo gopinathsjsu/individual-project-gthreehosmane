@@ -28,7 +28,7 @@ public class StockInventoryImpl implements  IStockInventory{
 	public void addCard(String newCardNumber) {
 		if(!cards.contains(newCardNumber)) {
 			cards.add(newCardNumber);
-			System.out.println("Card added to databse successfully");
+			System.out.println("Card added to database successfully");
 		}
 	}
 	public boolean hasCard(String cardNumber) {
@@ -38,7 +38,7 @@ public class StockInventoryImpl implements  IStockInventory{
 			return false;
 	}
 	public void addCap(String category, int cap) {
-		categoryCap.put(category, cap);
+		categoryCap.put(category.toLowerCase(), cap);
 	}
 	public void printCap() {
 		for(String key : categoryCap.keySet()) {
@@ -50,11 +50,18 @@ public class StockInventoryImpl implements  IStockInventory{
 	}
     
 	public void addItem(String item, String category, String quantity, String ppu) {
-		items.put(item, new String[] {category,quantity,ppu});
+		items.put(item.toLowerCase(), new String[] {category.toLowerCase(),quantity,ppu});
+	}
+	
+	public String getItemCategory(String item) {
+		return items.get(item)[0];
 	}
 	
 	public int getItemStock(String item) {
 		return Integer.valueOf(items.get(item)[1]);
+	}
+	public int getItemPrice(String item) {
+		return Integer.valueOf(items.get(item)[2]);
 	}
 
 }

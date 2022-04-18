@@ -3,6 +3,7 @@ package com.ims.impl;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.List;
 
 import com.ims.interfaces.IOutputWriterFactory;
 
@@ -11,7 +12,7 @@ public class CSVFactoryImpl implements IOutputWriterFactory{
 
 
 	@Override
-	public void write(String fileText) {
+	public void write(String fileText, List<String> items) {
 		try {
 		      File output = new File("Bill.csv");
 		      if (output.createNewFile()) {
