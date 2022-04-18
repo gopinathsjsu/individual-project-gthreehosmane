@@ -16,6 +16,11 @@ import com.ims.impl.StockInventoryImpl;
 
 
 public class Billing {
+	private ArrayList<String> items = new ArrayList<>(Arrays.asList("Clothes","Soap","Shampoo","Milk","Perfume","Chocolates","Handbag","Wallet","Bedsheet","Footware","HomeDecorPiece","Pen","Pencil"));
+	private ArrayList<String> category = new ArrayList<>(Arrays.asList("Essentials","Essentials","Essentials","Essentials","Luxury","Luxury","Luxury","Luxury","Misc","Misc","Misc","Misc","Misc"));
+	private ArrayList<String> quantity = new ArrayList<>(Arrays.asList("100","200","200","100","50","300","75","100","150","200","100","400","400"));
+	private ArrayList<String> ppu = new ArrayList<>(Arrays.asList("20","5","10","5","50","3","150","100","75","25","40","3","3"));
+	private ArrayList<String> cards = new ArrayList<>(Arrays.asList("5.41E+15","4.12E+12","3.41E+14","6.01E+15"));
 	public static void main(String[] args) {
 		File order = null;
 		HashMap<String,String> orderDetails = new HashMap<>();
@@ -61,24 +66,29 @@ public class Billing {
 				}
 				
 			}
-			orderReader.close();
+			
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+		finally {
+			try {
+				orderReader.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 		Billing billing = new Billing();
 		// set category cap
 		billing.setCategoryCap(uniqueInventoryInstance);
 		// set inventory
 		billing.setInventory(uniqueInventoryInstance);
+		// Add cards
+		billing.setCards(uniqueInventoryInstance);
 		ProcessOrderImpl processOrder = new ProcessOrderImpl();
 		processOrder.processOrder(orderDetails, cardNumber, orderFilename);
 		sc.close();
 
 	}
-	ArrayList<String> items = new ArrayList<>(Arrays.asList("Clothes","Soap","Shampoo","Milk","Perfume","Chocolates","Handbag","Wallet","Bedsheet","Footware","HomeDecorPiece","Pen","Pencil"));
-	ArrayList<String> category = new ArrayList<>(Arrays.asList("Essentials","Essentials","Essentials","Essentials","Luxury","Luxury","Luxury","Luxury","Misc","Misc","Misc","Misc","Misc"));
-	ArrayList<String> quantity = new ArrayList<>(Arrays.asList("100","200","200","100","50","300","75","100","150","200","100","400","400"));
-	ArrayList<String> ppu = new ArrayList<>(Arrays.asList("20","5","10","5","50","3","150","100","75","25","40","3","3"));
 	private void setInventory(StockInventoryImpl uniqueInventoryInstance) {
 		for(int i=0;i<items.size();i++) {
 		 uniqueInventoryInstance.addItem(items.get(i), category.get(i), quantity.get(i), ppu.get(i));
@@ -90,6 +100,11 @@ public class Billing {
 		uniqueInventoryInstance.addCap("Luxury", 4);
 		uniqueInventoryInstance.addCap("Misc", 6);
 		
+	}
+	public void setCards(StockInventoryImpl uniqueInventoryInstance) {
+		for(int i=0;i<cards.size();i++) {
+			 uniqueInventoryInstance.addCard(cards.get(i));
+		}
 	}
 
 }

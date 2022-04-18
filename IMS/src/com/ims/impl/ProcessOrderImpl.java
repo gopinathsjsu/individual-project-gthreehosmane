@@ -3,71 +3,92 @@ package com.ims.impl;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import com.ims.interfaces.IProcessOrder;
 
 public class ProcessOrderImpl implements IProcessOrder{
+	List<String> itemsExceedingCap = new ArrayList<>();
+	List<String> itemsExceedingStock = new ArrayList<>();
+	boolean stockError = false;
+	boolean capError = false;
 
 	@Override
-	public void processOrder(HashMap<String,String> order, String card, String inputFile) {
+	public void processOrder(Map<String,String> order, String card, String inputFile) {
 		StockInventoryImpl uniqueInventoryInstance = StockInventoryImpl.getInventoryInstance();
 		HashMap<String,Integer> cart = new HashMap<>();
-		List<String> itemsExceedingCap = new ArrayList<>();
-		List<String> itemsExceedingStock = new ArrayList<>();
-		boolean stockError = false;
-		boolean capError = false;
+		
 		//check category cap
-		for(String item : order.keySet()) {
-			String category = uniqueInventoryInstance.getItemCategory(item);
-			int cap = uniqueInventoryInstance.getCap(category);
-			int quantityRequested = Integer.valueOf(order.get(item));
-			if(quantityRequested > cap)
-			{
-				// add list of invalid items to a list
-				capError = true;
-				itemsExceedingCap.add(item);
-				
-			}
-		}
+		checkCategoryCapExceeds(uniqueInventoryInstance, order);
+		
 		// check stock in inventory
-		for(String key : order.keySet()) {
-			int itemStock = Integer.valueOf(uniqueInventoryInstance.getItemStock(key));
-			int requiredQuantity = Integer.valueOf(order.get(key));
-			
-			if(itemStock < requiredQuantity) {
-				stockError = true;
-				itemsExceedingStock.add(key);
-			}
-		}
-		//check if card is valid? TODO
+		checkStockExceeds(uniqueInventoryInstance, order);
 		
-			if(! uniqueInventoryInstance.hasCard(card)) {
-				uniqueInventoryInstance.addCard(card);
-			}
-		
-		//add items to cart
+		//add items to cart if no error else print errors to text file
 		if(stockError) {
 			TextFactoryImpl writeText = new TextFactoryImpl();
-			writeText.write("Order Quantity is more than items in the inventory, Please correct quantities for",itemsExceedingStock);
+			writeText.write("Order Quantity is more than items in the inventory, Please correct quantities for - ",itemsExceedingStock);
 		}
-		else if(capError) {
+		if(capError) {
 			TextFactoryImpl writeText = new TextFactoryImpl();
-			writeText.write("Order Quantity is more than category cap, Please correct quantities for ",itemsExceedingCap);
+			writeText.write("Order Quantity is more than category cap, Please correct quantities for -  ",itemsExceedingCap);
 		}
-		else {
-			for(String key : order.keySet()) {
-				int requiredQuanity = Integer.valueOf(order.get(key));
-				cart.put(key, requiredQuanity);
+		if(!stockError && !capError) {
+			for(Entry<String,String> e : order.entrySet()) {
+				int requiredQuanity = Integer.parseInt(order.get(e.getKey()));
+				cart.put(e.getKey(), requiredQuanity);
 			}
 			// calculate price
 			float price = 0;
-			for(String item : cart.keySet()) {
-				price+= uniqueInventoryInstance.getItemPrice(item)*cart.get(item);
+			for(Entry<String, Integer> e : cart.entrySet()) {
+				price= price+(uniqueInventoryInstance.getItemPrice(e.getKey())*cart.get(e.getKey()));
 			}
 			CSVFactoryImpl csvWriter = new CSVFactoryImpl();
 			csvWriter.write(String.valueOf(price),new ArrayList<>());
-			// if the order is successfull then, reduce the quantity of items that are checked out
-			//if output files already exists rewrite them or append
+			//checkout  if the order is successfull then, reduce the quantity of items that are checked out
+			for(Entry<String,Integer> e : cart.entrySet()) {
+				uniqueInventoryInstance.modifyItemQuantity(e.getKey(), cart.get(e.getKey()));
+			}
+			//check if card is valid? TODO
+			// check if you can append total price to the input file itself with the column heading as total price
+			
+			if(! uniqueInventoryInstance.hasCard(card)) {
+				uniqueInventoryInstance.addCard(card);
+				System.out.println("Card added to database successfully");
+			}
+			else {
+				System.out.println("Card number provided with this order already exists in database, so card was not added");
+			}
+		}
+	}
+	public void checkCategoryCapExceeds(StockInventoryImpl uniqueInventoryInstance, Map<String, String> order) {
+		
+		//check category cap
+				for(Entry<String, String> e : order.entrySet()) {
+					String category = uniqueInventoryInstance.getItemCategory(e.getKey());
+					int cap = uniqueInventoryInstance.getCap(category);
+					int quantityRequested = Integer.parseInt(order.get(e.getKey()));
+					if(quantityRequested > cap)
+					{
+						// add list of invalid items to a list
+						capError = true;
+						itemsExceedingCap.add(e.getKey());
+						
+					}
+				}
+		
+	}
+	public void checkStockExceeds(StockInventoryImpl uniqueInventoryInstance, Map<String, String> order) {
+		// check stock in inventory
+		for(Entry<String, String> e : order.entrySet()) {
+			int itemStock = uniqueInventoryInstance.getItemStock(e.getKey());
+			int requiredQuantity = Integer.parseInt(order.get(e.getKey()));
+			
+			if(itemStock < requiredQuantity) {
+				stockError = true;
+				itemsExceedingStock.add(e.getKey());
+			}
 		}
 	}
 

@@ -1,9 +1,9 @@
 package com.ims.interfaces;
 
-import java.util.HashMap;
+import java.util.Map;
 
 public interface IProcessOrder {
 	
-	public void processOrder(HashMap<String,String> order, String card, String inputFile);
+	public void processOrder(Map<String,String> order, String card, String inputFile);
 
 }

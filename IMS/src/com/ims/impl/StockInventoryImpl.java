@@ -2,6 +2,7 @@ package com.ims.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 import com.ims.interfaces.IStockInventory;
 
@@ -28,21 +29,17 @@ public class StockInventoryImpl implements  IStockInventory{
 	public void addCard(String newCardNumber) {
 		if(!cards.contains(newCardNumber)) {
 			cards.add(newCardNumber);
-			System.out.println("Card added to database successfully");
 		}
 	}
 	public boolean hasCard(String cardNumber) {
-		if(cards.contains(cardNumber))
-			return true;
-		else
-			return false;
+		return cards.contains(cardNumber);
 	}
 	public void addCap(String category, int cap) {
 		categoryCap.put(category.toLowerCase(), cap);
 	}
 	public void printCap() {
-		for(String key : categoryCap.keySet()) {
-			System.out.println("Category: "+key+" Cap: "+categoryCap.get(key));
+		for(Entry<String, Integer> e : categoryCap.entrySet()) {
+			System.out.println("Category: "+e.getKey()+" Cap: "+e.getValue());
 		}
 	}
 	public int getCap(String category) {
@@ -51,6 +48,11 @@ public class StockInventoryImpl implements  IStockInventory{
     
 	public void addItem(String item, String category, String quantity, String ppu) {
 		items.put(item.toLowerCase(), new String[] {category.toLowerCase(),quantity,ppu});
+	}
+	public void modifyItemQuantity(String item, int checkedOutQuantity) {
+		int currentQuantity = Integer.parseInt(items.get(item)[1]);
+		int newQuantity = currentQuantity - checkedOutQuantity ; 
+		items.get(item)[1] = String.valueOf(newQuantity);
 	}
 	
 	public String getItemCategory(String item) {
