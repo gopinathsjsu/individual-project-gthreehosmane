@@ -25,3 +25,4 @@ Steps to run the program -
 9. Please provide the absolute path of the input order file.
 10. If the file name is empty the program will be terminated.
 11. The output/error files will be generated in the same directory in which the project's src folder is present.
+12. Predefined category caps according to project description - Essentials: 3, Luxury: 4, and Misc: 6
