@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.ims.interfaces.IOutputWriterFactory;
 import com.ims.interfaces.IProcessOrder;
 
 public class ProcessOrderImpl implements IProcessOrder{
@@ -15,7 +16,7 @@ public class ProcessOrderImpl implements IProcessOrder{
 	boolean capError = false;
 
 	@Override
-	public void processOrder(Map<String,String> order, String card, String inputFile) {
+	public int processOrder(Map<String,String> order, String card) {
 		StockInventoryImpl uniqueInventoryInstance = StockInventoryImpl.getInventoryInstance();
 		HashMap<String,Integer> cart = new HashMap<>();
 		
@@ -27,12 +28,14 @@ public class ProcessOrderImpl implements IProcessOrder{
 		
 		//add items to cart if no error else print errors to text file
 		if(stockError) {
-			TextFactoryImpl writeText = new TextFactoryImpl();
+			IOutputWriterFactory writeText = new TextFactoryImpl();
 			writeText.write("Order Quantity is more than items in the inventory, Please correct quantities for - ",itemsExceedingStock);
+			return 111;
 		}
 		if(capError) {
-			TextFactoryImpl writeText = new TextFactoryImpl();
+			IOutputWriterFactory writeText = new TextFactoryImpl();
 			writeText.write("Order Quantity is more than category cap, Please correct quantities for -  ",itemsExceedingCap);
+			return 222;
 		}
 		if(!stockError && !capError) {
 			for(Entry<String,String> e : order.entrySet()) {
@@ -44,14 +47,13 @@ public class ProcessOrderImpl implements IProcessOrder{
 			for(Entry<String, Integer> e : cart.entrySet()) {
 				price= price+(uniqueInventoryInstance.getItemPrice(e.getKey())*cart.get(e.getKey()));
 			}
-			CSVFactoryImpl csvWriter = new CSVFactoryImpl();
+			IOutputWriterFactory csvWriter = new CSVFactoryImpl();
 			csvWriter.write(String.valueOf(price),new ArrayList<>());
 			//checkout  if the order is successfull then, reduce the quantity of items that are checked out
 			for(Entry<String,Integer> e : cart.entrySet()) {
 				uniqueInventoryInstance.modifyItemQuantity(e.getKey(), cart.get(e.getKey()));
 			}
 			//check if card is valid? TODO
-			// check if you can append total price to the input file itself with the column heading as total price
 			
 			if(! uniqueInventoryInstance.hasCard(card)) {
 				uniqueInventoryInstance.addCard(card);
@@ -61,6 +63,7 @@ public class ProcessOrderImpl implements IProcessOrder{
 				System.out.println("Card number provided with this order already exists in database, so card was not added");
 			}
 		}
+		return 333;
 	}
 	public void checkCategoryCapExceeds(StockInventoryImpl uniqueInventoryInstance, Map<String, String> order) {
 		

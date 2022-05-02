@@ -4,6 +4,6 @@ import java.util.Map;
 
 public interface IProcessOrder {
 	
-	public void processOrder(Map<String,String> order, String card, String inputFile);
+	public int processOrder(Map<String,String> order, String card);
 
 }
