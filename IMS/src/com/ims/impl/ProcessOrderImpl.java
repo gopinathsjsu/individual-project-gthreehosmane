@@ -53,7 +53,6 @@ public class ProcessOrderImpl implements IProcessOrder{
 			for(Entry<String,Integer> e : cart.entrySet()) {
 				uniqueInventoryInstance.modifyItemQuantity(e.getKey(), cart.get(e.getKey()));
 			}
-			//check if card is valid? TODO
 			
 			if(! uniqueInventoryInstance.hasCard(card)) {
 				uniqueInventoryInstance.addCard(card);

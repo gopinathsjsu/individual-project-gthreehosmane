@@ -65,5 +65,9 @@ public class StockInventoryImpl implements  IStockInventory{
 	public int getItemPrice(String item) {
 		return Integer.valueOf(items.get(item)[2]);
 	}
+	
+	public boolean containsItem(String item) {
+		return items.containsKey(item);
+	}
 
 }

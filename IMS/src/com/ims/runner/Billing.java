@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -23,6 +24,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.ims.impl.ProcessOrderImpl;
 import com.ims.impl.StockInventoryImpl;
+import com.ims.impl.TextFactoryImpl;
+import com.ims.interfaces.IOutputWriterFactory;
 
 
 
@@ -31,7 +34,7 @@ public class Billing {
 	private ArrayList<String> category = new ArrayList<>(Arrays.asList("Essentials","Essentials","Essentials","Essentials","Luxury","Luxury","Luxury","Luxury","Misc","Misc","Misc","Misc","Misc"));
 	private ArrayList<String> quantity = new ArrayList<>(Arrays.asList("100","200","200","100","50","300","75","100","150","200","100","400","400"));
 	private ArrayList<String> ppu = new ArrayList<>(Arrays.asList("20","5","10","5","50","3","150","100","75","25","40","3","3"));
-	private ArrayList<String> cards = new ArrayList<>(Arrays.asList("5.41E+15","4.12E+12","3.41E+14","6.01E+15"));
+	private ArrayList<String> cards = new ArrayList<>(Arrays.asList("5410000000000000","4120000000000","341000000000000","6010000000000000"));
 	private HashMap<String,String> orderDetails = new HashMap<>();
 	private String cardNumber = "";
 	public String getCardNumber() {
@@ -40,6 +43,7 @@ public class Billing {
 	public void setCardNumber(String cardNumber) {
 		this.cardNumber = cardNumber;
 	}
+	private IOutputWriterFactory writeText = new TextFactoryImpl();
 	public static void main(String[] args) {
 		
 		StockInventoryImpl uniqueInventoryInstance = StockInventoryImpl.getInventoryInstance();
@@ -52,7 +56,7 @@ public class Billing {
 		// Add cards
 		billing.setCards(uniqueInventoryInstance);
 		int code  = 0;
-		code = billing.readInput();
+		code = billing.readInput(uniqueInventoryInstance);
 		switch(code) {
 		
 		case 111: System.out.println("Order Quantity is more than items in the inventory, please check error file for details");
@@ -64,21 +68,34 @@ public class Billing {
 		case 333: System.out.println("Order processed successfully, please check output file for final order price");
 		break;
 		
-		case 444: System.out.println("Invalid card, unable to process order");
+		case 444: System.out.println("Invalid card, unable to process order. Please check error file for details");
 		break;
 		
-		case 555: System.out.println("Item name is blank, unable to process order");
+		case 555: System.out.println("Item name is blank, unable to process order. Please check error file for details");
 		break;
 		
-		case 666: System.out.println("Item quantity is blank, unable to process order");
+		case 666: System.out.println("Item quantity is blank, unable to process order. Please check error file for details");
 		break;
 		
-		case 777: System.out.println("Either order item name or quantity missing in order, unable to process order");
+		case 777: System.out.println("Either order item name or quantity missing in order, unable to process order. Please check error file for details");
 		break;
 		
-		case 999: System.out.println("Invalid file name, can't process order. Please try again");
+		case 888: System.out.println("Order quantity must be int fractions not allowed, unable to process order. Please check error file for details");
 		break;
 		
+		case 999: System.out.println("Invalid file name, can't process order. Please try again. Please check error file for details");
+		break;
+		
+		case 1010: System.out.println("Order Quantity can't be negative, unable to process order. Please check error file for details");
+		break;
+		
+		case 1020: System.out.println("One of the ordered items is invalid- our inventory does not contain that item, unable to process order. Please check error file for details");
+		break;
+		
+		case 1030: System.out.println("Invalid card provided");
+		break;
+		
+		default: System.out.println("Unknown error, unable to process order. Please check error file for details");
 		}
 		
 
@@ -101,7 +118,7 @@ public class Billing {
 		}
 	}
 	
-	public int readInput() {
+	public int readInput(StockInventoryImpl uniqueInventoryInstance) {
 		
 		Scanner sc = new Scanner(System.in);
 		// process order
@@ -112,12 +129,13 @@ public class Billing {
 		String orderFilename = sc.next();
 		if(orderFilename.isBlank() || orderFilename.isEmpty()) {
 			sc.close();
+			writeText.write("Invalid file name, can't process order. Please try again", new ArrayList<>());
 			return 999;
 		}
 		if(orderFilename.contains(".xlsx") || orderFilename.contains(".xls")) {
 			orderFilename = processxlsx(orderFilename);
 		}
-		setOrderVal = setOrder(orderFilename);
+		setOrderVal = setOrder(orderFilename, uniqueInventoryInstance);
 		if(setOrderVal != -1) {
 			sc.close();
 			return setOrderVal;
@@ -127,7 +145,7 @@ public class Billing {
 		sc.close();
 		return processOrderVal;
 	}
-	public int setOrder(String orderFilename) {
+	public int setOrder(String orderFilename, StockInventoryImpl uniqueInventoryInstance) {
 		File order = null;
 		String card  = null;
 		order = new File(orderFilename);
@@ -140,6 +158,7 @@ public class Billing {
 		BufferedReader orderReader = new BufferedReader(orderfileReader);
 		String orderline = "";
 		String[] ordervalues = null;
+		int colCount = 0;
 		try {
 			while((orderline = orderReader.readLine()) != null)
 			{
@@ -147,16 +166,41 @@ public class Billing {
 				for(int i=0;i< ordervalues.length;i++) {
 					String[] orderitems = ordervalues[i].split(",");
 					if( orderitems.length == 3) {
+						colCount++;
 						if(!(orderitems[1].equals("Quantity"))) {
 								String item = orderitems[0];
 								String orderquantity = orderitems[1];
 								card = orderitems[2];
-								if(card.isBlank() || card.isEmpty())
-									return 444;
-								if(item.isBlank() || item.isEmpty())
+					
+								if(item.isBlank() || item.isEmpty()) {
+									writeText.write("One of the item name empty, can't process order. Please try again. Item name empty for Order quanity - ", new ArrayList<>(Arrays.asList(orderquantity)));
 									return 555;
-								if(orderquantity.isBlank() || orderquantity.isEmpty())
+								}
+								if(orderquantity.isBlank() || orderquantity.isEmpty()) {
+									writeText.write("One of the item quantity empty, can't process order. Please try again. Item quantity missing for - ", new ArrayList<>(Arrays.asList(item)));
 									return 666;
+								}
+								if(orderquantity.contains("-")) {
+									writeText.write("Order quantity can't be negative, can't process order. Please try again. Order quantity - ", new ArrayList<>(Arrays.asList(orderquantity)));
+									return 1010;
+								}
+								if(orderquantity.contains(".")) {
+									String check = decimalQuantity(orderquantity);
+									if(check.equals("Invalid")) {
+									writeText.write("Order quantity can't contain decimal points, can't process order. Please try again. Order quantity - ", new ArrayList<>(Arrays.asList(orderquantity)));
+									return 888;
+									}
+									if(check.equals("Trim")) {
+										int index = orderquantity.indexOf('.');
+										orderquantity = orderquantity.substring(0, index);
+									}
+								}
+								if(!uniqueInventoryInstance.containsItem(item.toLowerCase())) {
+									writeText.write("One of the ordered items is invalid- our inventory does not contain that item, can't process order. Please try again. Order item name  - ", new ArrayList<>(Arrays.asList(item)));
+									return 1020;
+								}
+								if(card.contains("E"))
+									card = decryptCard(card);
 								this.setCardNumber(card);
 								orderDetails.put(item.toLowerCase(), orderquantity);
 						}		
@@ -167,18 +211,46 @@ public class Billing {
 					
 								String item = orderitems[0];
 								String orderquantity = orderitems[1];
-								if(item.isBlank() || item.isEmpty())
+								if(item.isBlank() || item.isEmpty()) {
+									writeText.write("One of the item name empty, can't process order. Please try again. Item name empty for Order quanity - ", new ArrayList<>(Arrays.asList(orderquantity)));
 									return 555;
-								if(orderquantity.isBlank() || orderquantity.isEmpty())
+								}
+								if(orderquantity.isBlank() || orderquantity.isEmpty()) {
+									writeText.write("One of the item quantity empty, can't process order. Please try again. Item quantity missing for - ", new ArrayList<>(Arrays.asList(item)));
 									return 666;
+								}
+								if(orderquantity.contains("-")) {
+									writeText.write("Order quantity can't be negative, can't process order. Please try again. Order quantity - ", new ArrayList<>(Arrays.asList(orderquantity)));
+									return 1010;
+								}
+								if(!uniqueInventoryInstance.containsItem(item.toLowerCase())) {
+									writeText.write("One of the ordered items is invalid- our inventory does not contain that item, can't process order. Please try again. Order item name - ", new ArrayList<>(Arrays.asList(item)));
+									return 1020;
+								}
+								if(orderquantity.contains(".")) {
+									String check = decimalQuantity(orderquantity);
+									if(check.equals("Invalid")) {
+									writeText.write("Order quantity can't contain decimal points, can't process order. Please try again. Order quantity - ", new ArrayList<>(Arrays.asList(orderquantity)));
+									return 888;
+									}
+									if(check.equals("Trim")) {
+										int index = orderquantity.indexOf('.');
+										orderquantity = orderquantity.substring(0, index);
+									}
+								}
 								orderDetails.put(item.toLowerCase(), orderquantity);
 						
 					}
 					else if(orderitems.length == 1) {
+						writeText.write("Either order item name or quantity missing in order - ", new ArrayList<>());
 						return 777;
 					}
 				}
 				
+			}
+			if(colCount!=2) {
+				writeText.write("Invalid card, can't process order. Please try again", new ArrayList<>());
+				return 444;
 			}
 			
 		} catch (IOException e) {
@@ -197,7 +269,7 @@ public class Billing {
 	public String processxlsx(String inputFileName) {
         // For storing data into CSV files
         StringBuffer data = new StringBuffer();
-        String outputFileName = "output.csv";
+        String outputFileName = "newInput.csv";
         File outputFile = new File(outputFileName);
         File inputFile = new File(inputFileName);
         try {
@@ -246,7 +318,7 @@ public class Billing {
                             break;
 
                         case BLANK:
-                            data.append("" + ",");
+                            data.append(" " + ",");
                             break;
                         default:
                             data.append(cell + ",");
@@ -265,5 +337,21 @@ public class Billing {
         }
         return outputFileName;
     }
+	public String decryptCard(String card) {
+		BigDecimal d = new BigDecimal(card);
+        return d.toPlainString();
+	}
+	
+	public String decimalQuantity(String quantity) {
+		if(quantity.contains(".")) {
+			int index = quantity.indexOf('.');
+			String temp1 = quantity.substring(index+1, index+2);
+			if(temp1.equals("0"))
+				return "Trim";
+			else
+				return "Invalid";
+		}
+		return "Insert";
+	}
 
 }
