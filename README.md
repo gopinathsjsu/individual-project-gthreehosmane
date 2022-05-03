@@ -26,3 +26,11 @@ Steps to run the program -
 10. If the file name is empty the program will be terminated.
 11. The output/error files will be generated in the same directory in which the project's src folder is present.
 12. Predefined category caps according to project description - Essentials: 3, Luxury: 4, and Misc: 6
+
+
+Project Details
+
+Design patterns used - 
+
+1. Singleton - Singleton design pattern is used to implement the in-memory database. The in-memory database will always have single instance. The billing.java class calls a method of Singleton class to get the unique instance.
+2. Abstrct factory -  Abstrct factory pattern is used to implement the writing output/error messages to files. The ProcessOrderImpl class will decide which concrete class to call based on the error message or final price of the order. If error message is generated, TextFactoryImpl class will be called to write error message to OUTPUT.txt file. If final price message is generated, CSVFactoryImpl class will be called to order success message to OUTPUT.csv file. 
