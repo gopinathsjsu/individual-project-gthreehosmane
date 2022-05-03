@@ -34,6 +34,7 @@ public class StockInventoryImpl implements  IStockInventory{
 	public boolean hasCard(String cardNumber) {
 		return cards.contains(cardNumber);
 	}
+	@Override
 	public void addCap(String category, int cap) {
 		categoryCap.put(category.toLowerCase(), cap);
 	}
@@ -42,10 +43,12 @@ public class StockInventoryImpl implements  IStockInventory{
 			System.out.println("Category: "+e.getKey()+" Cap: "+e.getValue());
 		}
 	}
+	@Override
 	public int getCap(String category) {
 		return categoryCap.get(category);
 	}
     
+	@Override
 	public void addItem(String item, String category, String quantity, String ppu) {
 		items.put(item.toLowerCase(), new String[] {category.toLowerCase(),quantity,ppu});
 	}
