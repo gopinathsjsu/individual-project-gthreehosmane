@@ -4,28 +4,43 @@ individual-project-gthreehosmane created by GitHub Classroom
 
 Steps to run the program - 
 
-1. Download the code as zip file from github.
-2. Extract the zip file.
-3. Import the extracted folder to Eclipse.
-4. The "lib" folder that is present in the project folder(CMPE-202-IMS) parallel to src folder contains all external jars required to process input files. These jars must be added to classpath before running the program.
-5. Select the project folder and right click on it to get a set of options. Selet Buildpath->Congifure Buildpath->Libraries.
-6. After Navigating to Libraries tab, select classpath and select Add jars option. Select the CMPE-202-IMS/lib folder from the the Jar selection popup.
-7. Now add all the jars present in the CMPE-202-IMS/lib folder and click on OK.
-8. Refresh/Clean the project once and the program is now ready to run.
+1. Download the code as zip file from github.  Name of the downloaded zip file will be individual-project-gthreehosmane-main.zip
+2. Extract the zip file to get a folder named - individual-project-gthreehosmane-main
+3. Follow below steps to import project to eclipse
+4. Import the extracted folder to Eclipse.
+5. In the import wizard select General - > Projects from Folder or Archive, click on next,and in the next step, select the extracted project folder from step 2(individual-project-gthreehosmane-main)and select IMS folder that is present in extracted folder, click on finish
+6. Now in eclipse you should be able to see the project folder IMS
+
+<img width="806" alt="classpath-2" src="https://user-images.githubusercontent.com/13237444/166634920-28d4135a-98fe-4a36-84e5-e45d27ebd95b.png">
+
+<img width="985" alt="classpath-3" src="https://user-images.githubusercontent.com/13237444/166634944-342a3916-42a3-4d33-a851-6087f5267fef.png">
+
+<img width="933" alt="classpath-4" src="https://user-images.githubusercontent.com/13237444/166634958-6d23107a-8cfd-4343-8847-a0706f3c733c.png">
+
+<img width="956" alt="classpath-5" src="https://user-images.githubusercontent.com/13237444/166634973-0613559f-ec74-40b2-85bf-72691c730572.png">
 
 
-<img width="772" alt="Screen Shot 2022-05-01 at 8 00 36 PM" src="https://user-images.githubusercontent.com/13237444/166179338-a6e7a98b-82e2-437e-ae97-8bda2d30c38f.png">
+7. The "lib" folder that is present in the project folder(CMPE-202-IMS) parallel to src folder contains all external jars required to process input files. These jars must be present in the classpath.
+8. If you encounter any errors for Apache POI related jars, please follow below steps.
+9. Right-click on IMS folder in eclipse, select BuildPath -> Configure Buildpath - >Libraries -> classpath and select Add Jars option
+<img width="820" alt="classpath-6" src="https://user-images.githubusercontent.com/13237444/166635057-6288f7bc-2939-4c2a-b5f1-1d58b55a3451.png">
 
-<img width="1099" alt="Screen Shot 2022-05-01 at 8 01 38 PM" src="https://user-images.githubusercontent.com/13237444/166179353-52c95f9e-1fda-4435-b610-b3c504434617.png">
+<img width="1158" alt="classpath-7" src="https://user-images.githubusercontent.com/13237444/166635114-0b9f6d53-6d4e-4d31-bc6f-b13df4bbb441.png">
 
 
+10.  In the Jar Selection wizard navigate to IMS->lib and select all the jars in lib folder and click on OK.
 
-7. Goto the Billing class which is present under package com.ims.runner
-8. You will be prompted to enter the order input file via console.
-9. Please provide the absolute path of the input order file.
-10. If the file name is empty the program will be terminated.
-11. The output/error files will be generated in the same directory in which the project's src folder is present.
-12. Predefined category caps according to project description - Essentials: 3, Luxury: 4, and Misc: 6
+<img width="956" alt="classpath-8" src="https://user-images.githubusercontent.com/13237444/166635137-4a39a91a-d59b-4886-8eed-476647df2ac5.png">
+
+
+11. Now add all the jars present in the IMS/lib folder and click on OK.
+12. Refresh/Clean the project once and the program is now ready to run.
+13. Goto the Billing class which is present under package com.ims.runner
+14. You will be prompted to enter the order input file via console.
+15. Please provide the absolute path of the input order file.
+16. If the file name is empty the program will be terminated.
+17. The output/error files will be generated in the same directory in which the project's src folder is present.
+18. Predefined category caps according to project description - Essentials: 3, Luxury: 4, and Misc: 6
 
 
 Project Details
