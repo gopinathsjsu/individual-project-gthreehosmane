@@ -5,13 +5,14 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.List;
+import java.util.Map;
 
 import com.ims.interfaces.IOutputWriterFactory;
 
 public class TextFactoryImpl implements IOutputWriterFactory{
 
 	@Override
-	public void write(String fileText, List<String> items) {
+	public void write(String fileText, List<String> items,Map<String,Integer> cart) {
 		try {
 		      File output = new File("OUTPUT.txt");
 		      boolean result = Files.deleteIfExists(output.toPath());

@@ -29,12 +29,12 @@ public class ProcessOrderImpl implements IProcessOrder{
 		//add items to cart if no error else print errors to text file
 		if(stockError) {
 			IOutputWriterFactory writeText = new TextFactoryImpl();
-			writeText.write("Order Quantity is more than items in the inventory, Please correct quantities for - ",itemsExceedingStock);
+			writeText.write("Order Quantity is more than items in the inventory, Please correct quantities for - ",itemsExceedingStock,cart);
 			return 111;
 		}
 		if(capError) {
 			IOutputWriterFactory writeText = new TextFactoryImpl();
-			writeText.write("Order Quantity is more than category cap, Please correct quantities for -  ",itemsExceedingCap);
+			writeText.write("Order Quantity is more than category cap, Please correct quantities for -  ",itemsExceedingCap,cart);
 			return 222;
 		}
 		if(!stockError && !capError) {
@@ -48,8 +48,8 @@ public class ProcessOrderImpl implements IProcessOrder{
 				price= price+(uniqueInventoryInstance.getItemPrice(e.getKey())*cart.get(e.getKey()));
 			}
 			IOutputWriterFactory csvWriter = new CSVFactoryImpl();
-			csvWriter.write(String.valueOf(price),new ArrayList<>());
-			//checkout  if the order is successfull then, reduce the quantity of items that are checked out
+			csvWriter.write(String.valueOf(price),new ArrayList<>(),cart);
+			//checkout  if the order is successful then, reduce the quantity of items that are checked out
 			for(Entry<String,Integer> e : cart.entrySet()) {
 				uniqueInventoryInstance.modifyItemQuantity(e.getKey(), cart.get(e.getKey()));
 			}

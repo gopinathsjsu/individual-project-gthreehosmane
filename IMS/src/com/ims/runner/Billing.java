@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Scanner;
 
 import org.apache.commons.io.FilenameUtils;
@@ -35,7 +36,13 @@ public class Billing {
 	private ArrayList<String> quantity = new ArrayList<>(Arrays.asList("100","200","200","100","50","300","75","100","150","200","100","400","400"));
 	private ArrayList<String> ppu = new ArrayList<>(Arrays.asList("20","5","10","5","50","3","150","100","75","25","40","3","3"));
 	private ArrayList<String> cards = new ArrayList<>(Arrays.asList("5410000000000000","4120000000000","341000000000000","6010000000000000"));
-	private HashMap<String,String> orderDetails = new HashMap<>();
+	private Map<String,String> orderDetails = new HashMap<>();
+	public Map<String, String> getOrderDetails() {
+		return orderDetails;
+	}
+	public void setOrderDetails(Map<String, String> orderDetails) {
+		this.orderDetails = orderDetails;
+	}
 	private String cardNumber = "";
 	public String getCardNumber() {
 		return cardNumber;
@@ -129,7 +136,7 @@ public class Billing {
 		String orderFilename = sc.next();
 		if(orderFilename.isBlank() || orderFilename.isEmpty()) {
 			sc.close();
-			writeText.write("Invalid file name, can't process order. Please try again", new ArrayList<>());
+			writeText.write("Invalid file name, can't process order. Please try again", new ArrayList<>(),new HashMap<>());
 			return 999;
 		}
 		if(orderFilename.contains(".xlsx") || orderFilename.contains(".xls")) {
@@ -173,21 +180,21 @@ public class Billing {
 								card = orderitems[2];
 					
 								if(item.isBlank() || item.isEmpty()) {
-									writeText.write("One of the item name empty, can't process order. Please try again. Item name empty for Order quanity - ", new ArrayList<>(Arrays.asList(orderquantity)));
+									writeText.write("One of the item name empty, can't process order. Please try again. Item name empty for Order quanity - ", new ArrayList<>(Arrays.asList(orderquantity)), new HashMap<>());
 									return 555;
 								}
 								if(orderquantity.isBlank() || orderquantity.isEmpty()) {
-									writeText.write("One of the item quantity empty, can't process order. Please try again. Item quantity missing for - ", new ArrayList<>(Arrays.asList(item)));
+									writeText.write("One of the item quantity empty, can't process order. Please try again. Item quantity missing for - ", new ArrayList<>(Arrays.asList(item)),new HashMap<>());
 									return 666;
 								}
 								if(orderquantity.contains("-")) {
-									writeText.write("Order quantity can't be negative, can't process order. Please try again. Order quantity - ", new ArrayList<>(Arrays.asList(orderquantity)));
+									writeText.write("Order quantity can't be negative, can't process order. Please try again. Order quantity - ", new ArrayList<>(Arrays.asList(orderquantity)),new HashMap<>());
 									return 1010;
 								}
 								if(orderquantity.contains(".")) {
 									String check = decimalQuantity(orderquantity);
 									if(check.equals("Invalid")) {
-									writeText.write("Order quantity can't contain decimal points, can't process order. Please try again. Order quantity - ", new ArrayList<>(Arrays.asList(orderquantity)));
+									writeText.write("Order quantity can't contain decimal points, can't process order. Please try again. Order quantity - ", new ArrayList<>(Arrays.asList(orderquantity)),new HashMap<>());
 									return 888;
 									}
 									if(check.equals("Trim")) {
@@ -196,7 +203,7 @@ public class Billing {
 									}
 								}
 								if(!uniqueInventoryInstance.containsItem(item.toLowerCase())) {
-									writeText.write("One of the ordered items is invalid- our inventory does not contain that item, can't process order. Please try again. Order item name  - ", new ArrayList<>(Arrays.asList(item)));
+									writeText.write("One of the ordered items is invalid- our inventory does not contain that item, can't process order. Please try again. Order item name  - ", new ArrayList<>(Arrays.asList(item)),new HashMap<>());
 									return 1020;
 								}
 								if(card.contains("E"))
@@ -212,25 +219,25 @@ public class Billing {
 								String item = orderitems[0];
 								String orderquantity = orderitems[1];
 								if(item.isBlank() || item.isEmpty()) {
-									writeText.write("One of the item name empty, can't process order. Please try again. Item name empty for Order quanity - ", new ArrayList<>(Arrays.asList(orderquantity)));
+									writeText.write("One of the item name empty, can't process order. Please try again. Item name empty for Order quanity - ", new ArrayList<>(Arrays.asList(orderquantity)),new HashMap<>());
 									return 555;
 								}
 								if(orderquantity.isBlank() || orderquantity.isEmpty()) {
-									writeText.write("One of the item quantity empty, can't process order. Please try again. Item quantity missing for - ", new ArrayList<>(Arrays.asList(item)));
+									writeText.write("One of the item quantity empty, can't process order. Please try again. Item quantity missing for - ", new ArrayList<>(Arrays.asList(item)),new HashMap<>());
 									return 666;
 								}
 								if(orderquantity.contains("-")) {
-									writeText.write("Order quantity can't be negative, can't process order. Please try again. Order quantity - ", new ArrayList<>(Arrays.asList(orderquantity)));
+									writeText.write("Order quantity can't be negative, can't process order. Please try again. Order quantity - ", new ArrayList<>(Arrays.asList(orderquantity)),new HashMap<>());
 									return 1010;
 								}
 								if(!uniqueInventoryInstance.containsItem(item.toLowerCase())) {
-									writeText.write("One of the ordered items is invalid- our inventory does not contain that item, can't process order. Please try again. Order item name - ", new ArrayList<>(Arrays.asList(item)));
+									writeText.write("One of the ordered items is invalid- our inventory does not contain that item, can't process order. Please try again. Order item name - ", new ArrayList<>(Arrays.asList(item)),new HashMap<>());
 									return 1020;
 								}
 								if(orderquantity.contains(".")) {
 									String check = decimalQuantity(orderquantity);
 									if(check.equals("Invalid")) {
-									writeText.write("Order quantity can't contain decimal points, can't process order. Please try again. Order quantity - ", new ArrayList<>(Arrays.asList(orderquantity)));
+									writeText.write("Order quantity can't contain decimal points, can't process order. Please try again. Order quantity - ", new ArrayList<>(Arrays.asList(orderquantity)),new HashMap<>());
 									return 888;
 									}
 									if(check.equals("Trim")) {
@@ -242,14 +249,14 @@ public class Billing {
 						
 					}
 					else if(orderitems.length == 1) {
-						writeText.write("Either order item name or quantity missing in order - ", new ArrayList<>());
+						writeText.write("Either order item name or quantity missing in order - ", new ArrayList<>(),new HashMap<>());
 						return 777;
 					}
 				}
 				
 			}
 			if(colCount!=2) {
-				writeText.write("Invalid card, can't process order. Please try again", new ArrayList<>());
+				writeText.write("Invalid card, can't process order. Please try again", new ArrayList<>(),new HashMap<>());
 				return 444;
 			}
 			
