@@ -62,6 +62,7 @@ public class CSVFactoryImpl implements IOutputWriterFactory{
 		      outputWriter.write("Order placed succesfully: cost of your order - "+fileText);
 		      outputWriter.close();
 		      System.out.println("Successfully wrote cost to the file.");
+		      System.out.println("Please check OUTPUT.csv at this location -  " + System.getProperty("user.dir"));
 		    } catch (IOException e) {
 		      System.out.println("An error occurred while creating file.");
 		      e.printStackTrace();

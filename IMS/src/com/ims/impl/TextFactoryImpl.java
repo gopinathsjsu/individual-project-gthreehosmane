@@ -35,6 +35,7 @@ public class TextFactoryImpl implements IOutputWriterFactory{
 		    	  }
 		      }
 		      System.out.println("Successfully wrote error message to the file.");
+		      System.out.println("Please check OUTPUT.txt at this location -  " + System.getProperty("user.dir"));
 		      outputWriter.close();
 		    } catch (IOException e) {
 		      System.out.println("An error occurred while creating file.");

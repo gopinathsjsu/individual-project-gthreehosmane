@@ -132,7 +132,7 @@ public class Billing {
 		//enter file name after spaces
 		int setOrderVal  = -1;
 		int processOrderVal = -1;
-		System.out.println("Enter order file name: ");
+		System.out.println("Enter order file name: \n");
 		String orderFilename = sc.next();
 		if(orderFilename.isBlank() || orderFilename.isEmpty()) {
 			sc.close();
