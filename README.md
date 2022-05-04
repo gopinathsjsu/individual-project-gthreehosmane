@@ -34,3 +34,28 @@ Design patterns used -
 
 1. Singleton - Singleton design pattern is used to implement the in-memory database. The in-memory database will always have single instance. The billing.java class calls a method of Singleton class to get the unique instance.
 2. Abstrct factory -  Abstrct factory pattern is used to implement the writing output/error messages to files. The ProcessOrderImpl class will decide which concrete class to call based on the error message or final price of the order. If error message is generated, TextFactoryImpl class will be called to write error message to OUTPUT.txt file. If final price message is generated, CSVFactoryImpl class will be called to order success message to OUTPUT.csv file. 
+
+
+
+
+Some sample testcase outputs
+
+1. Order contains  all valid items and item quantity does not exceed category cap or stock, so the out is a csv file with filnal price of the order. Also, the card is already present in databse so it will not be added.
+
+<img width="1462" alt="ims-1" src="https://user-images.githubusercontent.com/13237444/166618477-d3c5e9b1-659e-4328-b519-956441f04b94.png">
+
+
+2.  Order contains  all valid items and item quantity does not exceed category cap or stock, so the out is a csv file with filnal price of the order. But, the card is not present in databse so it will be added to the database.
+
+<img width="1417" alt="ims-2" src="https://user-images.githubusercontent.com/13237444/166618488-29a92f48-647f-4079-b7c6-ab4a60888017.png">
+
+
+3.  Order contains all valid items and quantities of some items exceed stock, so the out is a text file with error message and invalid item quantity. Also, the card will not be processed since the program encountered some error
+
+<img width="1732" alt="ims-3" src="https://user-images.githubusercontent.com/13237444/166618499-482268d0-fdd1-496f-bc89-89cb6af658ba.png">
+
+
+4. Order contains all valid items and quantities of some items exceed category cap, so the out is a text file with error message and invalid item quantity. Also, the card will not be processed since the program encountered some error.
+
+<img width="1482" alt="ims-4" src="https://user-images.githubusercontent.com/13237444/166618509-c0784988-c440-4de0-a29e-fbae92a3edb1.png">
+
