@@ -4,7 +4,7 @@ individual-project-gthreehosmane created by GitHub Classroom
 
 Steps to run the program - 
 
-**This project needs Java SE 11 or JDK 11 to work properly**
+**This project needs JDK 11 or above to work properly**
 
 1. Download the code as zip file from github.  Name of the downloaded zip file will be individual-project-gthreehosmane-main.zip
 2. Extract the zip file to get a folder named - individual-project-gthreehosmane-main
